@@ -20,7 +20,8 @@ You can now push new image to the registry:
 Tags
 ----
 
-    tutum/influxdb:latest -> influxdb 0.9.6.1
+    tutum/influxdb:latest -> influxdb 0.10.0
+    tutum/influxdb:0.10   -> influxdb 0.10.0
     tutum/influxdb:0.9    -> influxdb 0.9.6.1
     tutum/influxdb:0.8.8  -> influxdb 0.8.8
 
@@ -77,7 +78,7 @@ Alternatively, create a database and user with the InfluxDB 0.9 shell:
 For additional Administration methods with the InfluxDB 0.9 shell, check out the [`Administration`](https://influxdb.com/docs/v0.9/administration/administration.html) guide on the InfluxDB website.
 
 
-Initially execute influxql script (Available in influxdb:0.9)
+Initially execute influxql script (Available in influxdb:0.9, 0.10)
 ------------------------------------------------------------
 Use `-v /tmp/init_script.influxql:init_script.influxql:ro` if you want that script to been executed on the first time the container starts automatically. Each influxql command on separated line. For example:
 
