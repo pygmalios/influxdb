@@ -29,9 +29,16 @@ if [ -n "${FORCE_HOSTNAME}" ]; then
         #set hostname with IPv4 eth0
         HOSTIPNAME=$(ip a show dev eth0 | grep inet | grep eth0 | sed -e 's/^.*inet.//g' -e 's/\/.*$//g')
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${HOSTIPNAME}\"/g" ${CONFIG_FILE}
+        INFLUX_HOST="${HOSTIPNAME}"
     else
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${FORCE_HOSTNAME}\"/g" ${CONFIG_FILE}
+        INFLUX_HOST="${FORCE_HOSTNAME}"
     fi
+
+    echo "INFLUX_HOST: ${INFLUX_HOST}"
+    sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${INFLUX_HOST}:8088\"/g; }" ${CONFIG_FILE}
+    sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"http-bind-address\"/\"${INFLUX_HOST}:8091\"/g; }" ${CONFIG_FILE}
+    sed -i -r -e "/^\[http\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${INFLUX_HOST}:8086\"/g; }" ${CONFIG_FILE}
 fi
 
 # NOTE: 'seed-servers.' is nowhere to be found in config.toml, this cannot work anymore! NEED FOR REVIEW!
