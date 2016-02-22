@@ -31,7 +31,7 @@ if [ -n "${FORCE_HOSTNAME}" ]; then
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${HOSTNAME}\"/g" ${CONFIG_FILE}
         #[meta]
         /usr/bin/perl -p -i -e "s/bind-address = \":8088\"/bind-address = \"${HOSTNAME}:8088\"/g" ${CONFIG_FILE}
-        /usr/bin/perl -p -i -e "s/http-bind-address = \":8091\"/bind-address = \"${HOSTNAME}:8091\"/g" ${CONFIG_FILE}
+        /usr/bin/perl -p -i -e "s/http-bind-address = \":8091\"/http-bind-address = \"${HOSTNAME}:8091\"/g" ${CONFIG_FILE}
         #[http]
         /usr/bin/perl -p -i -e "s/bind-address = \":8086\"/bind-address = \"${HOSTNAME}:8086\"/g" ${CONFIG_FILE}
     else
@@ -39,7 +39,7 @@ if [ -n "${FORCE_HOSTNAME}" ]; then
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${FORCE_HOSTNAME}\"/g" ${CONFIG_FILE}
         #[meta]
         /usr/bin/perl -p -i -e "s/bind-address = \":8088\"/bind-address = \"${FORCE_HOSTNAME}:8088\"/g" ${CONFIG_FILE}
-        /usr/bin/perl -p -i -e "s/http-bind-address = \":8091\"/bind-address = \"${FORCE_HOSTNAME}:8091\"/g" ${CONFIG_FILE}
+        /usr/bin/perl -p -i -e "s/http-bind-address = \":8091\"/http-bind-address = \"${FORCE_HOSTNAME}:8091\"/g" ${CONFIG_FILE}
         #[http]
         /usr/bin/perl -p -i -e "s/bind-address = \":8086\"/bind-address = \"${FORCE_HOSTNAME}:8086\"/g" ${CONFIG_FILE}
     fi
