@@ -120,10 +120,14 @@ fi
 echo "influxdb configuration: "
 cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
-if [ -n "${JOIN}" ]; then
-  exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
+if [ -n "${CLUSTER}" ]; then
+    exec sudo service influxdb start
 else
-  exec influxd -config=${CONFIG_FILE} &
+    if [ -n "${JOIN}" ]; then
+      exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
+    else
+      exec influxd -config=${CONFIG_FILE} &
+    fi
 fi
 
 if [ -f "/data/.init_script_executed" ]; then
