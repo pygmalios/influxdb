@@ -112,6 +112,10 @@ if [ -n "${UDP_PORT}" ]; then
     sed -i -r -e "/^\[\[udp\]\]/, /^$/ { s/4444/${UDP_PORT}/; }" ${CONFIG_FILE}
 fi
 
+# Cluster meta nodes
+if [ -n "${META_NODE}" ]; then
+    echo "INFLUXD_OPTS=\"-join ${META_NODE}:8091\"" >> /etc/default/influxdb
+fi
 
 echo "influxdb configuration: "
 cat ${CONFIG_FILE}
