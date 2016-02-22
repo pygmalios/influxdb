@@ -29,16 +29,17 @@ if [ -n "${FORCE_HOSTNAME}" ]; then
         #set hostname with IPv4 eth0
         HOSTIPNAME=$(ip a show dev eth0 | grep inet | grep eth0 | sed -e 's/^.*inet.//g' -e 's/\/.*$//g')
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${HOSTIPNAME}\"/g" ${CONFIG_FILE}
-        INFLUX_HOST="${HOSTIPNAME}"
+        echo "INFLUX_HOST: ${HOSTIPNAME}"
+        sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${HOSTIPNAME}:8088\"/g; }" ${CONFIG_FILE}
+        sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"http-bind-address\"/\"${HOSTIPNAME}:8091\"/g; }" ${CONFIG_FILE}
+        sed -i -r -e "/^\[http\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${HOSTIPNAME}:8086\"/g; }" ${CONFIG_FILE}
     else
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${FORCE_HOSTNAME}\"/g" ${CONFIG_FILE}
-        INFLUX_HOST="${FORCE_HOSTNAME}"
+        echo "INFLUX_HOST: ${FORCE_HOSTNAME}"
+        sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${FORCE_HOSTNAME}:8088\"/g; }" ${CONFIG_FILE}
+        sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"http-bind-address\"/\"${FORCE_HOSTNAME}:8091\"/g; }" ${CONFIG_FILE}
+        sed -i -r -e "/^\[http\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${FORCE_HOSTNAME}:8086\"/g; }" ${CONFIG_FILE}
     fi
-
-    echo "INFLUX_HOST: ${INFLUX_HOST}"
-    sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${INFLUX_HOST}:8088\"/g; }" ${CONFIG_FILE}
-    sed -i -r -e "/^\[meta\]/, /^$/ { s/false/true/; s/\"http-bind-address\"/\"${INFLUX_HOST}:8091\"/g; }" ${CONFIG_FILE}
-    sed -i -r -e "/^\[http\]/, /^$/ { s/false/true/; s/\"bind-address\"/\"${INFLUX_HOST}:8086\"/g; }" ${CONFIG_FILE}
 fi
 
 # NOTE: 'seed-servers.' is nowhere to be found in config.toml, this cannot work anymore! NEED FOR REVIEW!
