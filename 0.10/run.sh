@@ -27,18 +27,21 @@ sed -i "s/^max-open-shards.*/max-open-shards = $(ulimit -n)/" ${CONFIG_FILE}
 if [ -n "${FORCE_HOSTNAME}" ]; then
     if [ "${FORCE_HOSTNAME}" == "auto" ]; then
         #set hostname with IPv4 eth0
-        HOSTIPNAME=$(ip a show dev eth0 | grep inet | grep eth0 | sed -e 's/^.*inet.//g' -e 's/\/.*$//g')
-        /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${HOSTIPNAME}\"/g" ${CONFIG_FILE}
-        echo "INFLUX_HOST: ${HOSTIPNAME}"
-        sed -i -r -e "/^\[meta\]/, /^$/ { s/\:8088/${HOSTIPNAME}:8088/; }" ${CONFIG_FILE}
-        sed -i -r -e "/^\[meta\]/, /^$/ { s/\:8091/${HOSTIPNAME}:8091/; }" ${CONFIG_FILE}
-        sed -i -r -e "/^\[http\]/, /^$/ { s/\:8086/${HOSTIPNAME}:8086/; }" ${CONFIG_FILE}
+        echo "INFLUX_HOST: ${HOSTNAME}"
+        /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${HOSTNAME}\"/g" ${CONFIG_FILE}
+        #[meta]
+        /usr/bin/perl -p -i -e "s/bind-address = \":8088\"/bind-address = \"${HOSTNAME}:8088\"/g" ${CONFIG_FILE}
+        /usr/bin/perl -p -i -e "s/http-bind-address = \":8091\"/bind-address = \"${HOSTNAME}:8091\"/g" ${CONFIG_FILE}
+        #[http]
+        /usr/bin/perl -p -i -e "s/bind-address = \":8086\"/bind-address = \"${HOSTNAME}:8086\"/g" ${CONFIG_FILE}
     else
-        /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${FORCE_HOSTNAME}\"/g" ${CONFIG_FILE}
         echo "INFLUX_HOST: ${FORCE_HOSTNAME}"
-        sed -i -r -e "/^\[meta\]/, /^$/ { s/\:8088/${FORCE_HOSTNAME}:8088/; }" ${CONFIG_FILE}
-        sed -i -r -e "/^\[meta\]/, /^$/ { s/\:8091/${FORCE_HOSTNAME}:8091/; }" ${CONFIG_FILE}
-        sed -i -r -e "/^\[http\]/, /^$/ { s/\:8086/${FORCE_HOSTNAME}:8086/; }" ${CONFIG_FILE}
+        /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${FORCE_HOSTNAME}\"/g" ${CONFIG_FILE}
+        #[meta]
+        /usr/bin/perl -p -i -e "s/bind-address = \":8088\"/bind-address = \"${FORCE_HOSTNAME}:8088\"/g" ${CONFIG_FILE}
+        /usr/bin/perl -p -i -e "s/http-bind-address = \":8091\"/bind-address = \"${FORCE_HOSTNAME}:8091\"/g" ${CONFIG_FILE}
+        #[http]
+        /usr/bin/perl -p -i -e "s/bind-address = \":8086\"/bind-address = \"${FORCE_HOSTNAME}:8086\"/g" ${CONFIG_FILE}
     fi
 fi
 
