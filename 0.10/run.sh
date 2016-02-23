@@ -54,10 +54,10 @@ cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
 if [ -n "${JOIN}" ]; then
   echo "in JOIN mode: ${JOIN}"
-  exec influxd -config=${CONFIG_FILE} -join "${JOIN}" &
+  exec influxd -config=${CONFIG_FILE} -join "${JOIN}"
 else
   echo "in MASTER mode"
-  exec influxd -config=${CONFIG_FILE} &
+  exec influxd -config=${CONFIG_FILE}
 fi
 
 if [ -f "/data/.init_script_executed" ]; then
