@@ -115,13 +115,11 @@ fi
 echo "influxdb configuration: "
 cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
-
 if [ -n "${JOIN}" ]; then
     exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
 else
     exec influxd -config=${CONFIG_FILE} &
- fi
-
+fi
 
 if [ -f "/data/.init_script_executed" ]; then
   echo "=> The initialization script had been executed before, skipping ..."
