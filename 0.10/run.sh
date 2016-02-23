@@ -117,7 +117,7 @@ echo "influxdb configuration: "
 cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
 if [ -n "${JOIN}" ]; then
-  exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
+  exec influxd -config=${CONFIG_FILE} -join "${JOIN}" &
 else
   exec influxd -config=${CONFIG_FILE} &
 fi
