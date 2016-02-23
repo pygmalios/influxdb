@@ -55,13 +55,13 @@ echo "=> Starting InfluxDB ..."
 if [ -n "${JOIN}" ]; then
   echo "in JOIN mode: ${JOIN}"
   echo INFLUXD_OPTS="-config=${CONFIG_FILE} -join ${JOIN}" >> /etc/default/influxdb
-  exec sudo service influxdb start
-  exec tail -F /var/log/influxdb/influxd.log
+  sudo service influxdb start
+  tail -F /var/log/influxdb/influxd.log
 else
   echo "in MASTER mode"
   echo INFLUXD_OPTS="-config=${CONFIG_FILE}" >> /etc/default/influxdb
-  exec sudo service influxdb start
-  exec tail -F /var/log/influxdb/influxd.log
+  sudo service influxdb start
+  tail -F /var/log/influxdb/influxd.log
 fi
 
 if [ -f "/data/.init_script_executed" ]; then
