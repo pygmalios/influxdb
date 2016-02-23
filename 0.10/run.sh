@@ -112,23 +112,16 @@ if [ -n "${UDP_PORT}" ]; then
     sed -i -r -e "/^\[\[udp\]\]/, /^$/ { s/4444/${UDP_PORT}/; }" ${CONFIG_FILE}
 fi
 
-# Cluster meta nodes
-if [ -n "${META_NODE}" ]; then
-    echo "INFLUXD_OPTS=\"-join ${META_NODE}:8091\"" >> /etc/default/influxdb
-fi
-
 echo "influxdb configuration: "
 cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
-if [ -n "${CLUSTER}" ]; then
-    exec sudo service influxdb start &
+
+if [ -n "${JOIN}" ]; then
+    exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
 else
-    if [ -n "${JOIN}" ]; then
-      exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
-    else
-      exec influxd -config=${CONFIG_FILE} &
-    fi
-fi
+    exec influxd -config=${CONFIG_FILE} &
+ fi
+
 
 if [ -f "/data/.init_script_executed" ]; then
   echo "=> The initialization script had been executed before, skipping ..."
