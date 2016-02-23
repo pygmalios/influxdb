@@ -54,13 +54,13 @@ cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
 if [ -n "${JOIN}" ]; then
   echo "in JOIN mode: ${JOIN}"
-  echo INFLUXD_OPTS="-config=${CONFIG_FILE} -join ${JOIN}" >> /etc/default/influxdb
+  echo "INFLUXD_OPTS=\"-config=${CONFIG_FILE} -join ${JOIN}\"" >> /etc/default/influxdb
   sudo service influxdb start
   sleep 10
   tail -F /var/log/influxdb/influxd.log
 else
   echo "in MASTER mode"
-  echo INFLUXD_OPTS="-config=${CONFIG_FILE}" >> /etc/default/influxdb
+  echo "INFLUXD_OPTS=\"-config=${CONFIG_FILE}\"" >> /etc/default/influxdb
   sudo service influxdb start
   sleep 10
   tail -F /var/log/influxdb/influxd.log
