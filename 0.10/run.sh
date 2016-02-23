@@ -26,7 +26,6 @@ sed -i "s/^max-open-shards.*/max-open-shards = $(ulimit -n)/" ${CONFIG_FILE}
 # Configure InfluxDB Cluster
 if [ -n "${FORCE_HOSTNAME}" ]; then
     if [ "${FORCE_HOSTNAME}" == "auto" ]; then
-        #set hostname with IPv4 eth0
         echo "INFLUX_HOST: ${HOSTNAME}"
         /usr/bin/perl -p -i -e "s/hostname = \"localhost\"/hostname = \"${HOSTNAME}\"/g" ${CONFIG_FILE}
         #[meta]
@@ -45,80 +44,19 @@ if [ -n "${FORCE_HOSTNAME}" ]; then
     fi
 fi
 
-# NOTE: 'seed-servers.' is nowhere to be found in config.toml, this cannot work anymore! NEED FOR REVIEW!
-# if [ -n "${SEEDS}" ]; then
-#     SEEDS=$(eval SEEDS=$SEEDS ; echo $SEEDS | grep '^\".*\"$' || echo "\""$SEEDS"\"" | sed -e 's/, */", "/g')
-#     /usr/bin/perl -p -i -e "s/^# seed-servers.*$/seed-servers = [${SEEDS}]/g" ${CONFIG_FILE}
-# fi
-
-if [ -n "${REPLI_FACTOR}" ]; then
-    /usr/bin/perl -p -i -e "s/replication-factor = 1/replication-factor = ${REPLI_FACTOR}/g" ${CONFIG_FILE}
-fi
-
 if [ "${PRE_CREATE_DB}" == "**None**" ]; then
     unset PRE_CREATE_DB
 fi
 
-# NOTE: It seems this is not used anymore...
-#
-# if [ "${SSL_CERT}" == "**None**" ]; then
-#     unset SSL_CERT
-# fi
-#
-# if [ "${SSL_SUPPORT}" == "**False**" ]; then
-#     unset SSL_SUPPORT
-# fi
-
-# Add Graphite support
-if [ -n "${GRAPHITE_DB}" ]; then
-    echo "GRAPHITE_DB: ${GRAPHITE_DB}"
-    sed -i -r -e "/^\[\[graphite\]\]/, /^$/ { s/false/true/; s/\"graphitedb\"/\"${GRAPHITE_DB}\"/g; }" ${CONFIG_FILE}
-fi
-
-if [ -n "${GRAPHITE_BINDING}" ]; then
-    echo "GRAPHITE_BINDING: ${GRAPHITE_BINDING}"
-    sed -i -r -e "/^\[\[graphite\]\]/, /^$/ { s/\:2003/${GRAPHITE_BINDING}/; }" ${CONFIG_FILE}
-fi
-
-if [ -n "${GRAPHITE_PROTOCOL}" ]; then
-    echo "GRAPHITE_PROTOCOL: ${GRAPHITE_PROTOCOL}"
-    sed -i -r -e "/^\[\[graphite\]\]/, /^$/ { s/tcp/${GRAPHITE_PROTOCOL}/; }" ${CONFIG_FILE}
-fi
-
-if [ -n "${GRAPHITE_TEMPLATE}" ]; then
-    echo "GRAPHITE_TEMPLATE: ${GRAPHITE_TEMPLATE}"
-    sed -i -r -e "/^\[\[graphite\]\]/, /^$/ { s/instance\.profile\.measurement\*/${GRAPHITE_TEMPLATE}/; }" ${CONFIG_FILE}
-fi
-
-# Add Collectd support
-if [ -n "${COLLECTD_DB}" ]; then
-    echo "COLLECTD_DB: ${COLLECTD_DB}"
-    sed -i -r -e "/^\[collectd\]/, /^$/ { s/false/true/; s/( *)# *(.*)\"collectd\"/\1\2\"${COLLECTD_DB}\"/g;}" ${CONFIG_FILE}
-fi
-if [ -n "${COLLECTD_BINDING}" ]; then
-    echo "COLLECTD_BINDING: ${COLLECTD_BINDING}"
-    sed -i -r -e "/^\[collectd\]/, /^$/ { s/( *)# *(.*)\":25826\"/\1\2\"${COLLECTD_BINDING}\"/g;}" ${CONFIG_FILE}
-fi
-if [ -n "${COLLECTD_RETENTION_POLICY}" ]; then
-    echo "COLLECTD_RETENTION_POLICY: ${COLLECTD_RETENTION_POLICY}"
-    sed -i -r -e "/^\[collectd\]/, /^$/ { s/( *)# *(retention-policy.*)\"\"/\1\2\"${COLLECTD_RETENTION_POLICY}\"/g;}" ${CONFIG_FILE}
-fi
-
-# Add UDP support
-if [ -n "${UDP_DB}" ]; then
-    sed -i -r -e "/^\[\[udp\]\]/, /^$/ { s/false/true/; s/#//g; s/\"udpdb\"/\"${UDP_DB}\"/g; }" ${CONFIG_FILE}
-fi
-if [ -n "${UDP_PORT}" ]; then
-    sed -i -r -e "/^\[\[udp\]\]/, /^$/ { s/4444/${UDP_PORT}/; }" ${CONFIG_FILE}
-fi
-
-
 echo "influxdb configuration: "
 cat ${CONFIG_FILE}
+
 echo "=> Starting InfluxDB ..."
 if [ -n "${JOIN}" ]; then
+  echo "in JOIN mode: ${JOIN}"
   exec influxd -config=${CONFIG_FILE} -join "${JOIN}" &
 else
+  echo "in MASTER mode"
   exec influxd -config=${CONFIG_FILE} &
 fi
 
