@@ -112,13 +112,14 @@ if [ -n "${UDP_PORT}" ]; then
     sed -i -r -e "/^\[\[udp\]\]/, /^$/ { s/4444/${UDP_PORT}/; }" ${CONFIG_FILE}
 fi
 
+
 echo "influxdb configuration: "
 cat ${CONFIG_FILE}
 echo "=> Starting InfluxDB ..."
 if [ -n "${JOIN}" ]; then
-    exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
+  exec influxd -config=${CONFIG_FILE} -join ${JOIN} &
 else
-    exec influxd -config=${CONFIG_FILE} &
+  exec influxd -config=${CONFIG_FILE} &
 fi
 
 if [ -f "/data/.init_script_executed" ]; then
