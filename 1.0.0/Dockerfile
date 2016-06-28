@@ -9,14 +9,14 @@ RUN curl -s -o /tmp/influxdb_latest_amd64.deb https://dl.influxdata.com/influxdb
   rm /tmp/influxdb_latest_amd64.deb && \
   rm -rf /var/lib/apt/lists/*
 
+# Include files
 ADD types.db /usr/share/collectd/types.db
 ADD config.toml /config/config.toml
 ADD run.sh /run.sh
 RUN chmod +x /*.sh
 
-ENV PRE_CREATE_DB **None**
-ENV SSL_SUPPORT **False**
-ENV SSL_CERT **None**
+# Environment settings
+ENV INFLUXD_OPTS -config=/config/config.toml
 
 # Admin server WebUI
 EXPOSE 8083
@@ -24,12 +24,8 @@ EXPOSE 8083
 # HTTP API
 EXPOSE 8086
 
-# Raft port (for clustering, don't expose publicly!)
-#EXPOSE 8090
-
-# Protobuf port (for clustering, don't expose publicly!)
-#EXPOSE 8099
-
+# Mount point
 VOLUME ["/var/lib/influxdb"]
 
-CMD ["/run.sh"]
+# Default command
+ENTRYPOINT ["/run.sh"]
