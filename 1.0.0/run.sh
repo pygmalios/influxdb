@@ -17,4 +17,4 @@ LOGFILE=/var/log/influxdb/influxd.log
 echo "=> Starting InfluxDB ..."
 
 # Start Influxdb
-exec $DAEMON -pidfile $PIDFILE -config $CONFIG $INFLUXD_OPTS &>$LOGFILE
+exec $DAEMON -pidfile $PIDFILE -config $CONFIG $INFLUXD_OPTS
