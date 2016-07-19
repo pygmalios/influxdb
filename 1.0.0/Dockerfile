@@ -2,7 +2,7 @@ FROM tutum/curl:trusty
 MAINTAINER Jan Antala <j.antala@pygmalios.com>
 
 # Install InfluxDB
-ENV INFLUXDB_VERSION 1.0.0-beta1
+ENV INFLUXDB_VERSION 1.0.0-beta3
 
 RUN curl -s -o /tmp/influxdb_latest_amd64.deb https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_amd64.deb && \
   dpkg -i /tmp/influxdb_latest_amd64.deb && \
